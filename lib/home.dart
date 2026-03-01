@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, no_leading_underscores_for_local_identifiers, non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'package:to_do_list/Inbox.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,22 +27,23 @@ class _HomeState extends State<Home> {
 
   Future<void> _loadData() async {
     final prefs = await SharedPreferences.getInstance();
+    String? notesString = prefs.getString('saved_notes');
+    String? projectsString = prefs.getString('saved_projects');
+
     setState(() {
-      String? notesString = prefs.getString('saved_notes');
       if (notesString != null) {
         myNotes = List<Map<String, dynamic>>.from(jsonDecode(notesString));
       }
 
-      String? projectsString = prefs.getString('saved_projects');
       if (projectsString != null) {
         myProjects = List<Map<String, dynamic>>.from(
           jsonDecode(projectsString),
         );
       } else {
         myProjects = [
-          {'name': 'Personal', 'color': Colors.red},
-          {'name': 'Errands', 'color': Colors.deepOrange},
-          {'name': 'Fitnesss', 'color': Colors.orange},
+          {'name': 'Personal', 'color': Colors.red.value},
+          {'name': 'Errands', 'color': Colors.deepOrange.value},
+          {'name': 'Fitnesss', 'color': Colors.orange.value},
         ];
       }
     });
@@ -53,13 +56,13 @@ class _HomeState extends State<Home> {
   }
 
   void _showAddProjectDialog() {
-    TextEditingController _projController = TextEditingController();
+    TextEditingController _ProjController = TextEditingController();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Add New Project"),
         content: TextField(
-          controller: _projController,
+          controller: _ProjController,
           decoration: const InputDecoration(hintText: "Project Name"),
         ),
         actions: [
@@ -69,11 +72,11 @@ class _HomeState extends State<Home> {
           ),
           TextButton(
             onPressed: () {
-              if (_projController.text.isNotEmpty) {
+              if (_ProjController.text.isNotEmpty) {
                 setState(() {
                   myProjects.add({
-                    'name': _projController.text,
-                    'color': Colors.blueGrey.value,
+                    'name': _ProjController.text,
+                    'color': Colors.teal.value, 
                   });
                 });
                 _saveData();
@@ -151,7 +154,6 @@ class _HomeState extends State<Home> {
         },
         child: const Icon(Icons.add, color: Colors.white),
       ),
-
       appBar: AppBar(
         backgroundColor: Colors.teal,
         title: const Text(
@@ -165,7 +167,6 @@ class _HomeState extends State<Home> {
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-
       drawer: Drawer(
         child: Column(
           children: [
@@ -224,12 +225,7 @@ class _HomeState extends State<Home> {
                       title: Text("Upcoming"),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        top: 16,
-                        bottom: 8,
-                      ),
+                      padding: const EdgeInsets.all(16.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -263,9 +259,7 @@ class _HomeState extends State<Home> {
                 ),
                 onReorder: (int oldIndex, int newIndex) {
                   setState(() {
-                    if (oldIndex < newIndex) {
-                      newIndex -= 1;
-                    }
+                    if (oldIndex < newIndex) newIndex -= 1;
                     final item = myProjects.removeAt(oldIndex);
                     myProjects.insert(newIndex, item);
                   });
@@ -278,7 +272,7 @@ class _HomeState extends State<Home> {
                       leading: Icon(
                         Icons.circle,
                         size: 12,
-                        color: Color(myProjects[i]['color']),
+                        color: Color(myProjects[i]['color'] as int),
                       ),
                       title: Text(myProjects[i]['name']),
                       trailing: IconButton(
@@ -301,7 +295,6 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
-
       body: myNotes.isEmpty
           ? Center(
               child: Column(
@@ -323,11 +316,7 @@ class _HomeState extends State<Home> {
                     child: Text(
                       "Looks like everything's organized in the right place. Tap + to add a task.",
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
-                        height: 1.5,
-                      ),
+                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                     ),
                   ),
                 ],
@@ -343,10 +332,8 @@ class _HomeState extends State<Home> {
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.teal,
                   ),
-                  alignment: Alignment.center,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

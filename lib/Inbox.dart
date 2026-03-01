@@ -1,5 +1,5 @@
+// ignore_for_file: file_names
 
-// ignore: file_names
 import 'package:flutter/material.dart';
 
 class Inbox extends StatefulWidget {
